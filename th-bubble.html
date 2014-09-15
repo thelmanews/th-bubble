@@ -158,10 +158,21 @@ the animation, which is provided by the th-countup-num element.
           // Reset bubble and number back to starting state.
           reset: function() {
             var self = this;
-            self.bubble
-              .transition()
-              .duration(self.duration*1000)
-              .attr("r", self.bubbleRadiusStart);
+            if(self.image){
+              self.image
+                .transition()
+                  .duration(self.duration*1000)
+                  .attr('x', -self.bubbleRadiusStart)
+                  .attr('y', -self.bubbleRadiusStart)
+                  .attr('width', self.bubbleRadiusStart*2)
+                  .attr('height', self.bubbleRadiusStart*2);
+
+            } else {
+              self.bubble
+                .transition()
+                .duration(self.duration*1000)
+                .attr("r", self.bubbleRadiusStart);
+            }
 
           },
           // Transition of bubble to final state.
