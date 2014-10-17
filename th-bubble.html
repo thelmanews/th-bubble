@@ -14,7 +14,7 @@ the animation, which is provided by the th-countup-num element.
 @homepage http://github.com/thelmanews/thelma-charts/blob/master/th-bubble.html
 -->
 
-<polymer-element name="th-bubble" extends="th-d3-chart" attributes="duration chartSize">
+<polymer-element name="th-bubble" extends="th-d3-chart" attributes="duration chartSize showNumber">
   <template>
     <core-style ref="theme"></core-style>
     <style>
@@ -67,6 +67,11 @@ the animation, which is provided by the th-countup-num element.
            * @type {Number}
            */
           duration: 2,
+          /**
+           * 'showNumber' determines whether the counting number is displayed or not
+           * @type {Boolean}
+           */
+          showNumber: true,
           chartSize: 125,
           /**
            * chartData observer only shallow observes chartData. this is needed for deep observation 
@@ -148,8 +153,10 @@ the animation, which is provided by the th-countup-num element.
                 .style("stroke", self.data.color);
             }
             
-            self.value = d3.select(self.$.value)
-              .text(self.data.prefix+self.data.startValue+self.data.suffix);
+            if (self.showNumber){
+              self.value = d3.select(self.$.value)
+                .text(self.data.prefix+self.data.startValue+self.data.suffix);
+            }
 
             self.label = d3.select(self.$.label)
               .text(self.data.label);
@@ -194,14 +201,16 @@ the animation, which is provided by the th-countup-num element.
                 .attr("r",  self.bubbleRadiusEnd); 
             }
 
-            var i = d3.interpolate(self.data.startValue, self.data.endValue);
-            //var formatPercent = d3.format(".0");
-            self.value.transition().duration(self.duration*1000).tween("countup", function() {
-                  return function(t) {
-                    var num = i(t);
-                    self.value.text(self.data.prefix+parseFloat(num).toFixed(self.decimalPlaces)+self.data.suffix);
-                  };
-            });
+            if (self.showNumber){
+              var i = d3.interpolate(self.data.startValue, self.data.endValue);
+              //var formatPercent = d3.format(".0");
+              self.value.transition().duration(self.duration*1000).tween("countup", function() {
+                    return function(t) {
+                      var num = i(t);
+                      self.value.text(self.data.prefix+parseFloat(num).toFixed(self.decimalPlaces)+self.data.suffix);
+                    };
+              });
+            }
 
           },
           // If data changes, reset the starting/ending radius and call animate again.
