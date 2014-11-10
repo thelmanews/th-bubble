@@ -14,7 +14,7 @@ the animation, which is provided by the th-countup-num element.
 @homepage http://github.com/thelmanews/thelma-charts/blob/master/th-bubble.html
 -->
 
-<polymer-element name="th-bubble" extends="th-d3-chart" attributes="duration chartSize showNumber">
+<polymer-element name="th-bubble" extends="th-d3-chart" attributes="duration chartSize showNumber input">
   <template>
     <core-style ref="theme"></core-style>
     <style>
@@ -30,7 +30,7 @@ the animation, which is provided by the th-countup-num element.
       .text {
         text-align: center;
         margin: 0 auto;
-        width: {{chartSize + "px"}};
+        width: {{computedSize + "px"}};
         font-size: {{numberSize*0.7 + "px"}};
       }
 
@@ -72,7 +72,7 @@ the animation, which is provided by the th-countup-num element.
            * @type {Boolean}
            */
           showNumber: true,
-          chartSize: 125,
+          chartSize: '200',
           /**
            * chartData observer only shallow observes chartData. this is needed for deep observation 
            */
@@ -125,8 +125,10 @@ the animation, which is provided by the th-countup-num element.
 
             var self = this;
 
-            self.bubbleArea = self.chartSize;
-            self.numberSize = Math.max((self.chartSize * 0.15), 14);
+            self.getComputedDims(self);
+            
+            self.bubbleArea = self.computedSize;
+            self.numberSize = Math.max((self.computedSize * 0.15), 14);
 
             // Determine bubble start and end radius, given values
             self.bubbleRadiusStart = (self.bubbleArea * (self._bubbleStart/100))/2;
