@@ -1,0 +1,16 @@
+:host {
+  display: inline-block;
+  position: relative;
+  width: 50px;
+}
+
+#value {
+  font-size: {{numberSize + "px"}};
+}
+
+.text {
+  text-align: center;
+  margin: 0 auto;
+  width: {{computedSize + "px"}};
+  font-size: {{numberSize*0.7 + "px"}};
+}

@@ -17,10 +17,12 @@ the animation, which is provided by the th-countup-num element.
 <polymer-element name="th-bubble" extends="th-d3-chart" attributes="duration chartSize showNumber input">
   <template>
     <core-style ref="theme"></core-style>
-    <style>
+    <!--<link href='th-bubble.css' rel='stylesheet'/>-->
+   <style>
       :host {
         display: inline-block;
         position: relative;
+        width: 200px;
       }
 
       #value {
@@ -33,10 +35,14 @@ the animation, which is provided by the th-countup-num element.
         width: {{computedSize + "px"}};
         font-size: {{numberSize*0.7 + "px"}};
       }
+    </style>
+<!--
+    <style id="styles">
 
     </style>
+  -->
       <svg id="chart"></svg>
-      <div id="value" class="text"></div>
+      <div id="value" class="text" style="width:{{computedSize}}px;"></div>
       <div id="label" class="text label"></div>
 
   </template>
@@ -79,8 +85,26 @@ the animation, which is provided by the th-countup-num element.
           observe: {
             'chartData[0].endValue': 'chartDataChanged',
           },
+          // domReady:function(){
+          //   // console.log(this.style);
+          //   // this.thidth = this.getAttribute('width');
+          //   // var style = this.$.styles;
+          //   // style.textContent = ":host { display: inline-block; position: relative; width: 50px;";
+          //   // console.log(style);
+          //   this.thWidth= this.offsetWidth;
+          //   console.log(this.offsetWidth);
+          //   console.log(this.thWidth);
+          //   // console.log(style.textContent);
+          //   // console.log(Platform.ShadowCSS);
+          // },
           init: function() {
+            this.thWidth= this.offsetWidth;
             
+            console.log(this.style.width);
+            console.log(window.getComputedStyle(this).width);
+            console.log(this.offsetWidth);
+            console.log(this.style.paddingRight);
+
             var self = this;
             self.svg = d3.select(self.$.chart);
             self.data = self.chartData[0];
@@ -126,7 +150,8 @@ the animation, which is provided by the th-countup-num element.
             var self = this;
 
             self.getComputedDims(self);
-            
+            console.log(self.computedSize);
+            console.log(self.offsetWidth);
             self.bubbleArea = self.computedSize;
             self.numberSize = Math.max((self.computedSize * 0.15), 14);
 
@@ -232,3 +257,4 @@ the animation, which is provided by the th-countup-num element.
 
   </script>
 </polymer-element>
+<!--  -->
