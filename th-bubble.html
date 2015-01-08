@@ -125,10 +125,14 @@ the animation, which is provided by the th-countup-num element.
            */
           _setupElements: function() {
 
-            var self = this;
+            var self = this,
+                width = self.computeWidth(),
+                height = self.computeHeight();
 
-            self.computedSize = Math.min(self.computeWidth(), self.computeHeight());
+            self.computedSize = Math.min(width, height);
             
+            var leftMargin = (width - self.computedSize)/2;
+
             self.bubbleArea = self.computedSize*0.85;
             self.numberSize = Math.max((self.computedSize * 0.15), 14);
 
@@ -136,11 +140,11 @@ the animation, which is provided by the th-countup-num element.
             self.bubbleRadiusStart = (self.bubbleArea * (self._bubbleStart/100))/2;
             self.bubbleRadiusEnd = (self.bubbleArea * (self._bubbleEnd/100))/2;
 
-            self.svg.attr("width", self.computedSize)
-                .attr("height", self.bubbleArea);
+            self.svg.attr("width", width)
+                .attr("height", self.bubbleArea)
 
             self.container
-                .attr("transform", "translate(" +(self.computedSize / 2 ) + "," + (self.bubbleArea / 2) + ")");
+                .attr("transform", "translate(" +(self.computedSize / 2 + leftMargin ) + "," + (self.bubbleArea / 2) + ")");
             
             // Append a circle to the g and set starting radius
             if(self.image){
