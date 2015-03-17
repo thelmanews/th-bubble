@@ -14,7 +14,7 @@ the animation, which is provided by the th-countup-num element.
 @homepage http://github.com/thelmanews/thelma-charts/blob/master/th-bubble.html
 -->
 
-<polymer-element name="th-bubble" extends="th-d3-chart" attributes="duration chartSize showNumber input">
+<polymer-element name="th-bubble" extends="th-d3-chart" attributes="duration chartSize showNumber input linearlyScale">
   <template>
     <core-style ref="theme"></core-style>
     <style>
@@ -78,6 +78,13 @@ the animation, which is provided by the th-countup-num element.
           /**
            * chartData observer only shallow observes chartData. this is needed for deep observation 
            */
+          
+           /**
+            * Scale area in porportion with data vs radius
+            * @type {Boolean}
+            */
+          linearlyScale: false,
+
           observe: {
             'chartData[0].endValue': 'chartDataChanged',
           },
@@ -137,8 +144,8 @@ the animation, which is provided by the th-countup-num element.
             self.numberSize = Math.max((self.computedSize * 0.15), 14);
 
             // Determine bubble start and end radius, given values
-            self.bubbleRadiusStart = (self.bubbleArea * (self._bubbleStart/100))/2;
-            self.bubbleRadiusEnd = (self.bubbleArea * (self._bubbleEnd/100))/2;
+            self.bubbleRadiusStart = (self.bubbleArea * ((self.linearlyScale ? Math.sqrt(self._bubbleStart)*10 : self._bubbleStart)/100))/2;
+            self.bubbleRadiusEnd = (self.bubbleArea * ((self.linearlyScale ? Math.sqrt(self._bubbleEnd)*10 : self._bubbleEnd)/100))/2;
 
             self.svg.attr("width", width)
                 .attr("height", self.bubbleArea)
