@@ -63,7 +63,7 @@ the animation, which is provided by the th-countup-num element.
            *  'label' is displayed beneath the value
            * @type {String}
            */
-          chartData:[{ endValue: 95, startValue: 0, color: "", prefix:"-", image: "", suffix:"", label:""}],
+          chartData:[{ endValue: 75, startValue: 0, color: "", prefix:"+", image: "", suffix:"", label:""}],
           /**
            * 'duration' determines the animation duration of the bubble, in seconds.
            * @type {Number}
@@ -170,11 +170,11 @@ the animation, which is provided by the th-countup-num element.
           },
           _setupImage: function(){
             var self = this,
-                leftMargin = (self.width - self.startingBubbleRadius*2)/2;
+                margin = (self.width - self.startingBubbleRadius*2)/2;
             
             self.image
-                .attr('x', leftMargin)
-                .attr('y',0)
+               .attr('x', margin)
+                .attr('y',margin)
                 .attr('width', self.startingBubbleRadius*2)
                 .attr('height', self.startingBubbleRadius*2);
                 
@@ -194,11 +194,11 @@ the animation, which is provided by the th-countup-num element.
           },
           _setupSquare: function(){
             var self = this,
-                leftMargin = (self.width - self.startingBubbleRadius*2)/2;
+                margin = (self.width - self.startingBubbleRadius*2)/2;
              
             self.square
-                .attr('x', leftMargin)
-                .attr('y',0)
+                .attr('x', margin)
+                .attr('y',margin)
                 .attr('width', self.startingBubbleRadius*2)
                 .attr('height', self.startingBubbleRadius*2);
           },
