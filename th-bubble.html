@@ -14,7 +14,7 @@ the animation, which is provided by the th-countup-num element.
 @homepage http://github.com/thelmanews/thelma-charts/blob/master/th-bubble.html
 -->
 
-<polymer-element name="th-bubble" extends="th-d3-chart" attributes="duration chartSize showNumber input linearlyScale">
+<polymer-element name="th-bubble" extends="th-d3-chart" attributes="duration shape chartSize showNumber input linearlyScale">
   <template>
     <core-style ref="theme"></core-style>
     <style>
@@ -37,7 +37,7 @@ the animation, which is provided by the th-countup-num element.
       }
 
     </style>
-      <svg id="chart"></svg>
+      <svg id="chart" ></svg>
       <div id="value" class="text"></div>
       <div id="label" class="text label"></div>
 
@@ -63,7 +63,7 @@ the animation, which is provided by the th-countup-num element.
            *  'label' is displayed beneath the value
            * @type {String}
            */
-          chartData:[{ endValue: 75, startValue: 0, color: "", prefix:"-", image: "", suffix:"", label:""}],
+          chartData:[{ endValue: 95, startValue: 0, color: "", prefix:"-", image: "", suffix:"", label:""}],
           /**
            * 'duration' determines the animation duration of the bubble, in seconds.
            * @type {Number}
@@ -74,17 +74,20 @@ the animation, which is provided by the th-countup-num element.
            * @type {Boolean}
            */
           showNumber: true,
-          chartSize: '200',
           /**
-           * chartData observer only shallow observes chartData. this is needed for deep observation 
+           * 'shape' determines whether the bubble is in the shape of a square or circle
+           * @options 'circle' or 'square'
+           * @type {String}
            */
-          
+          shape: 'square',
            /**
             * Scale area in porportion with data vs radius
             * @type {Boolean}
             */
           linearlyScale: false,
-
+          /**
+           * chartData observer only shallow observes chartData. this is needed for deep observation 
+           */
           observe: {
             'chartData[0].endValue': 'chartDataChanged',
           },
@@ -94,78 +97,66 @@ the animation, which is provided by the th-countup-num element.
             self.svg = d3.select(self.$.chart);
             self.data = self.chartData[0];
 
-            self.data.startValue = self.data.startValue || 0;
-            self.data.prefix = self.data.prefix || "";
-            self.data.suffix = self.data.suffix || "";
-            self.data.label = self.data.label || "";
-            self.image = self.data.image || "";
-
-            if (self.data.prefix == "-"){
-              self._bubbleStart = 100 - self.data.startValue;
-              self._bubbleEnd = 100 - self.data.endValue;
-            } else {
-              self._bubbleStart = self.data.startValue;
-              self._bubbleEnd = self.data.endValue;
-            }
-
             // create container and bubble for the first time
             self.container = self.svg.append("g").attr('class','container');
+            self.image = self.data.image || "";
 
             if (self.image){
               self.image = self.container.append("image")
                 .attr('xlink:href', self.image);
+            } else if (self.shape === 'square') {
+              self.square = self.container.append("rect")
+                .attr("class", "square data0");
             } else {
               self.bubble = self.container.append("circle")
                 .attr("class", "bubble data0");
             }
 
+            self.data.startValue = self.data.startValue || 0;
+            self.data.prefix = self.data.prefix || "";
+            self.data.suffix = self.data.suffix || "";
+            self.data.label = self.data.label || "";
+
             // Calculate the number of decimal places to display
             self.decimalPlaces  = Math.max(self.getDecimalPlaces(self.data.startValue), self.getDecimalPlaces(self.data.endValue));
             
             self._setupElements();
-        
           },
-
           /**
            * setting up element properties after each data size change 
            * @return {[type]}
            */
           _setupElements: function() {
 
-            var self = this,
-                width = self.computeWidth(),
-                height = self.computeHeight();
-
-            self.computedSize = Math.min(width, height);
+            var self = this;
+            self.width = self.computeWidth();
+            self.height = self.computeHeight();
             
-            var leftMargin = (width - self.computedSize)/2;
+            self.computedSize = Math.min(self.width, self.height);
 
-            self.bubbleArea = self.computedSize*0.85;
+            if (self.data.prefix == "-"){
+              self._startingValue = 100 - self.data.startValue;
+              self._endingValue = 100 - self.data.endValue;
+            } else {
+              self._startingValue = self.data.startValue;
+              self._endingValue = self.data.endValue;
+            }
+
+            self.svgHeight = self.computedSize*0.85;
             self.numberSize = Math.max((self.computedSize * 0.15), 14);
 
             // Determine bubble start and end radius, given values
-            self.bubbleRadiusStart = (self.bubbleArea * ((self.linearlyScale ? Math.sqrt(self._bubbleStart)*10 : self._bubbleStart)/100))/2;
-            self.bubbleRadiusEnd = (self.bubbleArea * ((self.linearlyScale ? Math.sqrt(self._bubbleEnd)*10 : self._bubbleEnd)/100))/2;
+            self.startingBubbleRadius = (self.svgHeight * ((self.linearlyScale ? Math.sqrt(self._startingValue)*10 : self._startingValue)/100))/2;
+            self.endingBubbleRadius = (self.svgHeight * ((self.linearlyScale ? Math.sqrt(self._endingValue)*10 : self._endingValue)/100))/2;
+            self.svg.attr("width", self.width)
+                .attr("height", self.svgHeight)
 
-            self.svg.attr("width", width)
-                .attr("height", self.bubbleArea)
-
-            self.container
-                .attr("transform", "translate(" +(self.computedSize / 2 + leftMargin ) + "," + (self.bubbleArea / 2) + ")");
-            
-            // Append a circle to the g and set starting radius
             if(self.image){
-              self.image
-                .attr('x', -self.bubbleRadiusStart)
-                .attr('y', -self.bubbleRadiusStart)
-                .attr('width', self.bubbleRadiusStart*2)
-                .attr('height', self.bubbleRadiusStart*2);
-
-            } else {
-              self.bubble
-                .attr("r", self.bubbleRadiusStart)
-                .style("fill", self.data.color)
-                .style("stroke", self.data.color);
+              self._setupImage();
+            } else if (self.bubble){
+              self._setupBubble();
+            } else if (self.square){
+              self._setupSquare();
             }
             
             if (self.showNumber){
@@ -177,6 +168,40 @@ the animation, which is provided by the th-countup-num element.
               .text(self.data.label);
 
           },
+          _setupImage: function(){
+            var self = this,
+                leftMargin = (self.width - self.startingBubbleRadius*2)/2;
+            
+            self.image
+                .attr('x', leftMargin)
+                .attr('y',0)
+                .attr('width', self.startingBubbleRadius*2)
+                .attr('height', self.startingBubbleRadius*2);
+                
+          },
+          _setupBubble: function(){
+            var self = this,
+                leftMargin = (self.width - self.computedSize)/2;
+
+            self.container
+                .attr("transform", "translate(" +(self.computedSize / 2 + leftMargin ) + "," + (self.svgHeight / 2) + ")");
+
+            self.bubble
+                .attr("r", self.startingBubbleRadius)
+                .style("fill", self.data.color)
+                .style("stroke", self.data.color);
+            
+          },
+          _setupSquare: function(){
+            var self = this,
+                leftMargin = (self.width - self.startingBubbleRadius*2)/2;
+             
+            self.square
+                .attr('x', leftMargin)
+                .attr('y',0)
+                .attr('width', self.startingBubbleRadius*2)
+                .attr('height', self.startingBubbleRadius*2);
+          },
           // Reset bubble and number back to starting state.
           reset: function() {
             var self = this;
@@ -184,16 +209,16 @@ the animation, which is provided by the th-countup-num element.
               self.image
                 .transition()
                   .duration(self.duration*1000)
-                  .attr('x', -self.bubbleRadiusStart)
-                  .attr('y', -self.bubbleRadiusStart)
-                  .attr('width', self.bubbleRadiusStart*2)
-                  .attr('height', self.bubbleRadiusStart*2);
+                  .attr('x', -self.startingBubbleRadius)
+                  .attr('y', -self.startingBubbleRadius)
+                  .attr('width', self.startingBubbleRadius*2)
+                  .attr('height', self.startingBubbleRadius*2);
 
             } else {
               self.bubble
                 .transition()
                 .duration(self.duration*1000)
-                .attr("r", self.bubbleRadiusStart);
+                .attr("r", self.startingBubbleRadius);
             }
 
           },
@@ -205,15 +230,23 @@ the animation, which is provided by the th-countup-num element.
               self.image
                 .transition()
                   .duration(self.duration*1000)
-                  .attr('x', -self.bubbleRadiusEnd)
-                  .attr('y', -self.bubbleRadiusEnd)
-                  .attr('width', self.bubbleRadiusEnd*2)
-                  .attr('height', self.bubbleRadiusEnd*2);
-            } else {
+                  .attr('x', self.width/2 - self.endingBubbleRadius)
+                  .attr('y',self.width/2 - self.endingBubbleRadius)
+                  .attr('width', self.endingBubbleRadius*2)
+                  .attr('height', self.endingBubbleRadius*2);
+            } else if (self.bubble) {
               self.bubble
                 .transition()
                 .duration(self.duration*1000)
-                .attr("r",  self.bubbleRadiusEnd); 
+                .attr("r",  self.endingBubbleRadius); 
+            } else if (self.square){
+              self.square
+                .transition()
+                .duration(self.duration*1000)
+                  .attr('x', self.width/2 - self.endingBubbleRadius)
+                  .attr('y',self.width/2 - self.endingBubbleRadius)
+                  .attr('width', self.endingBubbleRadius*2)
+                  .attr('height', self.endingBubbleRadius*2);
             }
 
             if (self.showNumber){
