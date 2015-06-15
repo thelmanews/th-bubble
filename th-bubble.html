@@ -63,7 +63,7 @@ the animation, which is provided by the th-countup-num element.
            *  'label' is displayed beneath the value
            * @type {String}
            */
-          chartData:[{ endValue: 75, startValue: 0, color: "", prefix:"+", image: "", suffix:"", label:""}],
+          chartData:[{ endValue: 5, startValue: 70, color: "", prefix:"", image: "", suffix:"", label:""}],
           /**
            * 'duration' determines the animation duration of the bubble, in seconds.
            * @type {Number}
@@ -170,11 +170,12 @@ the animation, which is provided by the th-countup-num element.
           },
           _setupImage: function(){
             var self = this,
-                margin = (self.width - self.startingBubbleRadius*2)/2;
+                marginLeft = (self.width - self.startingBubbleRadius*2)/2,
+                marginTop = (self.svgHeight - self.startingBubbleRadius*2)/2;
             
             self.image
-               .attr('x', margin)
-                .attr('y',margin)
+                .attr('x', marginLeft)
+                .attr('y', marginTop)
                 .attr('width', self.startingBubbleRadius*2)
                 .attr('height', self.startingBubbleRadius*2);
                 
@@ -194,11 +195,12 @@ the animation, which is provided by the th-countup-num element.
           },
           _setupSquare: function(){
             var self = this,
-                margin = (self.width - self.startingBubbleRadius*2)/2;
+                marginLeft = (self.width - self.startingBubbleRadius*2)/2,
+                marginTop = (self.svgHeight - self.startingBubbleRadius*2)/2;
              
             self.square
-                .attr('x', margin)
-                .attr('y',margin)
+                .attr('x', marginLeft)
+                .attr('y', marginTop)
                 .attr('width', self.startingBubbleRadius*2)
                 .attr('height', self.startingBubbleRadius*2);
           },
@@ -244,7 +246,7 @@ the animation, which is provided by the th-countup-num element.
                 .transition()
                 .duration(self.duration*1000)
                   .attr('x', self.width/2 - self.endingBubbleRadius)
-                  .attr('y',self.width/2 - self.endingBubbleRadius)
+                  .attr('y', self.svgHeight/2 - self.endingBubbleRadius)
                   .attr('width', self.endingBubbleRadius*2)
                   .attr('height', self.endingBubbleRadius*2);
             }
