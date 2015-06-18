@@ -202,7 +202,9 @@ the animation, which is provided by the th-countup-num element.
                 .attr('x', marginLeft)
                 .attr('y', marginTop)
                 .attr('width', self.startingBubbleRadius*2)
-                .attr('height', self.startingBubbleRadius*2);
+                .attr('height', self.startingBubbleRadius*2)
+                .style("fill", self.data.color)
+                .style("stroke", self.data.color);
           },
           // Reset bubble and number back to starting state.
           reset: function() {
