@@ -215,7 +215,6 @@ the animation, which is provided by the th-countup-num element.
             if(self.image){
               self.image
                 .transition()
-                  .duration(self.duration*1000)
                   .attr('x', -self.startingBubbleRadius)
                   .attr('y', -self.startingBubbleRadius)
                   .attr('width', self.startingBubbleRadius*2)
@@ -224,12 +223,10 @@ the animation, which is provided by the th-countup-num element.
             } else if (self.bubble) {
               self.bubble
                 .transition()
-                .duration(self.duration*1000)
                 .attr("r", self.startingBubbleRadius);
             } else if (self.square){
               self.square
                 .transition()
-                .duration(self.duration*1000)
                   .attr('x', marginLeft)
                   .attr('y', marginTop)
                   .attr('width', self.startingBubbleRadius*2)
