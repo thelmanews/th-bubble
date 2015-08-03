@@ -208,7 +208,10 @@ the animation, which is provided by the th-countup-num element.
           },
           // Reset bubble and number back to starting state.
           reset: function() {
-            var self = this;
+            var self = this,
+                marginLeft = (self.width - self.startingBubbleRadius*2)/2,
+                marginTop = (self.svgHeight - self.startingBubbleRadius*2)/2;
+
             if(self.image){
               self.image
                 .transition()
@@ -218,11 +221,19 @@ the animation, which is provided by the th-countup-num element.
                   .attr('width', self.startingBubbleRadius*2)
                   .attr('height', self.startingBubbleRadius*2);
 
-            } else {
+            } else if (self.bubble) {
               self.bubble
                 .transition()
                 .duration(self.duration*1000)
                 .attr("r", self.startingBubbleRadius);
+            } else if (self.square){
+              self.square
+                .transition()
+                .duration(self.duration*1000)
+                  .attr('x', marginLeft)
+                  .attr('y', marginTop)
+                  .attr('width', self.startingBubbleRadius*2)
+                  .attr('height', self.startingBubbleRadius*2);
             }
 
           },
